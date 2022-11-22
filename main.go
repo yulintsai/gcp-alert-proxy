@@ -162,10 +162,15 @@ func ToTelegram(c *gin.Context) {
 	id := c.Param("chat_id")
 	telUrl := "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + id + "&text="
 	start := &url.URL{
-		Path: "![warn] \n" + ret.Incident.PolicyName + "\n" + ret.Incident.Documentation.Content + "\n" + ret.Incident.URL,
+		Path: "[warn] \n" + ret.Incident.PolicyName + "\n" + ret.Incident.Documentation.Content + "\n" + ret.Incident.URL,
 	}
 
-	resp, _ := http.Get(telUrl + start.String()[2:])
+	textMsg := start.String()
+	if start.String()[0:2] == "./" {
+		textMsg = start.String()[2:]
+	}
+
+	resp, _ := http.Get(telUrl + textMsg)
 	resp.Body.Close()
 
 	c.Data(204, "", nil)
